@@ -16,9 +16,9 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy 
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
+from verify_email.email_handler import send_verification_email
 from .forms import AddressSelectionForm, CustomUserChangeForm, CustomUserCreationForm, AuthenticationForm, SimpleProfileSetting
 from .models import User
-from verify_email.email_handler import send_verification_email
 
 import logging
 logger = logging.getLogger(__name__)

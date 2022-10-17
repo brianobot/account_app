@@ -5,13 +5,15 @@ from django.contrib.gis.db import models
 from django.db.models import Q
 from django.conf import settings
 # from django.db import models
-from account_app.managers import CustomUserManager, FinancialAccountManager, ProfileManager
 from datetime import datetime
 from decimal import Decimal
+
 import uuid
 import random
-
 import logging
+
+from .managers import CustomUserManager, ProfileManager
+
 logger = logging.getLogger(__name__)
 
 class User(AbstractUser):

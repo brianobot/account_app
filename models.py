@@ -1,12 +1,8 @@
-from email.policy import default
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
-from django.contrib.gis.db import models
-from django.db.models import Q
+# from django.contrib.gis.db import models
 from django.conf import settings
-# from django.db import models
-from datetime import datetime
-from decimal import Decimal
+from django.db import models
 
 import uuid
 import random
@@ -17,17 +13,14 @@ from .managers import CustomUserManager, ProfileManager
 logger = logging.getLogger(__name__)
 
 class User(AbstractUser):
+    username = None
     email = models.EmailField(_('email address'), unique=True)
     ref = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
-    username = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-
-    def followers(self):
-        return self.profile.followers.count()
 
     @property
     def uid(self):

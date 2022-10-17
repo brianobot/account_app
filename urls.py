@@ -1,6 +1,7 @@
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.auth import views as auth_views
+
 from . import views
 from . import forms
 

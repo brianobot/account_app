@@ -11,7 +11,7 @@ This application solves the problem of having to build a custom django applicati
 - Add the `account_app.apps.AccountAppConfig` to your installed application in your `settings.py` file 
 - Add the following lines to your project settings file `settings.py` by default
     ```
-    AUTH_USER_MODEL = 'account_app.User' 
+    AUTH_USER_MODEL = 'account.User' 
 
     LOGIN_REDIRECT_URL = "/"
     LOGOUT_REDIRECT_URL = '/' # rethink this process 
@@ -22,12 +22,12 @@ This application solves the problem of having to build a custom django applicati
     ```
 - Make sure this line is in your account `__init__.py` file 
     ```
-    default_app_config = 'account_app.apps.AccountAppConfig'
+    default_app_config = 'account.apps.AccountConfig'
 
     ```
 - Make sure this line is in your account `apps.py` file
     ```
-    class AccountsAppConfig(AppConfig):
+    class AccountConfig(AppConfig):
         ...
 
         def ready(self):

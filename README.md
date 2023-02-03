@@ -15,17 +15,17 @@ This application solves the problem of having to build a custom django applicati
 
     LOGIN_REDIRECT_URL = "/"
     LOGOUT_REDIRECT_URL = '/' # rethink this process 
-    LOGIN_URL = 'account:login-account'
+    LOGIN_URL = 'accounts:login-account'
 
     SYSTEM_ACCOUNT_EMAIL = 'email_username@domain.com'
 
     ```
-- Make sure this line is in your account `__init__.py` file 
+- Make sure this line is in your accounts `__init__.py` file 
     ```
-    default_app_config = 'account.apps.AccountConfig'
+    default_app_config = 'accounts.apps.AccountsConfig'
 
     ```
-- Make sure this line is in your account `apps.py` file
+- Make sure this line is in your accounts `apps.py` file
     ```
     class AccountConfig(AppConfig):
         ...

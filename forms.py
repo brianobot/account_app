@@ -1,11 +1,11 @@
+from django import forms
+from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.contrib import messages
-from .models import Profile, User, Address
+from accounts.models import Profile, User
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,18 +17,30 @@ class CustomUserCreationForm(UserCreationForm):
     error_css_class = 'error'
     required_css_class = 'required'
 
+    USER_TYPE = (('vendor', 'vendor'),('user', 'user'))
+    user_type = forms.ChoiceField(choices=USER_TYPE, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # this widgets attributes are set here because modelforms won't recognize fields declared in the modelforms itself
+        self.fields['password1'].widget.attrs['placeholder'] = 'Password'
+        self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
+        self.fields['password1'].widget.attrs['class'] = 'form-control'
+        self.fields['password2'].widget.attrs['class'] = 'form-control'
+        self.fields['password1'].widget.attrs['arial-label'] = 'Password'
+        self.fields['password2'].widget.attrs['arial-label'] = 'Confirm Password'
+
     class Meta(UserCreationForm.Meta):
         model = User
         # review - pack the minimal no of fields to get just enuf data about a useron creation
-        fields = ('email',)
+        fields = ('email',)        
 
         widgets = {
-            "password1": forms.PasswordInput(attrs={'autocomplete': 'off'}),
-            "password2": forms.PasswordInput(attrs={'autocomplete': 'off'}),
+            "email": forms.EmailInput(attrs={"class": "form-control", 'placeholder': 'Email', 'auto-complete': 'off'}),
         }
 
     def send_sms(self):
-        # review implement sms sending to users to alert and welcome them to the system
+        # TODO: review implement sms sending to users to alert and welcome them to the system
         pass
 
     def clean(self):
@@ -50,14 +62,16 @@ class CustomUserChangeForm(UserChangeForm):
 
 class AuthenticationForm(forms.Form):
     """
-    bla bla bla documentated by aiddee
+    Form to authenticate a valid user into the system/platform
     """
-    email = forms.CharField(max_length=255, help_text=_('Enter Email address'), label="Email address")
-    password = forms.CharField(min_length=5, max_length=255, strip=False, widget=forms.PasswordInput, help_text=_('Enter Password'))
+    email = forms.EmailField(max_length=255, help_text=_('Enter Email address'), label="Email address", 
+            widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email address', 'auto-complete': 'off'}))
+    password = forms.CharField(min_length=5, max_length=255, strip=False, help_text=_('Enter Password'), 
+            widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password', 'auto-complete': 'off'}))
 
     widgets = {
-        'email': forms.TextInput(attrs={'placeholder': 'Email address'}),
-        'password': forms.PasswordInput(attrs={'placeholder': 'Password'})
+        'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email address', 'auto-complete': 'off'}),
+        'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password', 'auto-complete': 'off'}),
     }
 
     def __init__(self, request, *args, **kwargs):
@@ -83,34 +97,7 @@ class AuthenticationForm(forms.Form):
     def get_user(self):
         return self.user
 
-
-class AdddressCreationForm(forms.ModelForm):
-    """
-    Allow the user to Create a Address Instance to be used for activity tracking on the site
-    remember to latch the current profile/brand unto the form to validate properly
-    #review implement funtionality to allow use to user GPS location to set their address
-    """
-    class Meta:
-        model = Address
-        fields = ['name', 'address1', 'zip_code', 'city', 'state', 'country']
-
-
-class AddressSelectionForm(forms.Form):
-    """
-    Use to Allow the User to Select an Address from their List of Address...either for Order Delivery or Editing(Updating of Address)
-    Contains a field to hold only a single address
-
-    >>>instance = AddressCreationForm()
-    Note: to be called from within a view
-    """
-    address = forms.ModelChoiceField(queryset=None, initial="Please Select An Address from your address List")
-
-    def __init__(self, user, *args, **kwargs):
-        super(). __init__(*args, **kwargs)
-        queryset = Address.objects.filter(user=user)
-        self.fields['address'].queryset = queryset
-
-class SimpleProfileSetting(forms.ModelForm):
+    # TODO: check the usefulness of this Meta class declaration here, since this is Form and not a ModelForm
     class Meta:
         model = Profile
         fields = ('handle', 'avatar')

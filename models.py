@@ -1,21 +1,19 @@
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import AbstractUser
-# from django.contrib.gis.db import models
-from django.conf import settings
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.contrib.gis.db import models as gis_models
+from django.utils.translation import gettext_lazy as _
+from config.models import CurrencyMixin
+from accounts.managers import CustomUserManager
 
-import uuid
-import random
 import logging
-
-from .managers import CustomUserManager, ProfileManager
-
 logger = logging.getLogger(__name__)
 
+
 class User(AbstractUser):
-    username = None
     email = models.EmailField(_('email address'), unique=True)
     ref = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
+    username = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -26,6 +24,10 @@ class User(AbstractUser):
     def uid(self):
         return self.profile.uid
 
+    def delete(self, *args, **kwargs):
+        self.is_active = False
+        self.save()
+
     def __str__(self) -> str:
         return str(self.email)
 
@@ -34,16 +36,29 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
+    GENDER = (
+        ('male', 'male'), # change this to shorter version
+        ('female', 'female'), # change this to shorter version
+    )
     """  this model repr the database table that will hold all none auth essential details about a user, from preferences to accounts settings """    
-    uid = models.CharField(max_length=100, blank=True, null=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, primary_key=True)
-    handle = models.CharField(max_length=100, blank=True)
     bio = models.TextField(blank=True, null=True)
+    handle = models.CharField(max_length=100, blank=True, null=True)
+    uid = models.CharField(max_length=100, blank=True, null=True)
+    gender = models.CharField(choices=GENDER, max_length=6, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, default='avatars/blank_profile.png')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, primary_key=True)
+    location = gis_models.PointField(blank=True, null=True)
 
     is_verified = models.BooleanField(default=False, blank=True)
 
-    # objects = ProfileManager()
+    @property
+    def get_balance(self):
+        return self.account_balance.balance
+
+    def save(self, *args, **kwargs):
+        if not self.handle:
+            self.handle = "@" + self.user.email.split("@")[0]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.handle)
@@ -51,3 +66,25 @@ class Profile(models.Model):
     def __repr__(self):
         return f'<Profile(email={self.handle})>'    
     
+
+class AccountBalance(CurrencyMixin):
+    STATUS = (
+        ('active', 'active'),
+        ('inactive', 'inactive'),
+        ('suspended', 'suspended'),
+    )
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, null=True, related_name='account_balance')
+    balance = models.DecimalField(default=0.0, max_digits=15, decimal_places=2 , blank=True, editable=False)
+    status = models.CharField(max_length=20, choices=STATUS, default='active', blank=True)
+
+    def top_up(self, transaction):
+        if transaction.status != 'pending':
+            raise AttributeError(f"Can not process the given transaction, status='{transaction.status}'")
+        self.balance += transaction.net_amount
+        self.save()
+
+    def __str__(self):
+        return str(self.profile)
+
+    def __repr__(self):
+        return f"AccountBalance(profile={self.profile}, currency={self.currency})"

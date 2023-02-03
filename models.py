@@ -3,14 +3,16 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.db import models as gis_models
 from django.utils.translation import gettext_lazy as _
+
 from config.models import CurrencyMixin
-from accounts.managers import CustomUserManager
+from .managers import CustomUserManager
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 class User(AbstractUser):
+    """User Model which uses email for user authentication in place of username"""
     email = models.EmailField(_('email address'), unique=True)
     ref = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
     username = None
@@ -37,10 +39,13 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     GENDER = (
-        ('male', 'male'), # change this to shorter version
-        ('female', 'female'), # change this to shorter version
+        ('male', 'male'),
+        ('female', 'female'),
     )
-    """  this model repr the database table that will hold all none auth essential details about a user, from preferences to accounts settings """    
+
+    """  this model repr the database table that will hold all non-authentication essential details about a user, 
+    from preferences to accounts settings 
+    """    
     bio = models.TextField(blank=True, null=True)
     handle = models.CharField(max_length=100, blank=True, null=True)
     uid = models.CharField(max_length=100, blank=True, null=True)

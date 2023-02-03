@@ -5,7 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from accounts.models import Profile, User
+
+from .models import Profile, User
 
 import logging
 logger = logging.getLogger(__name__)

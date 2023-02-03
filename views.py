@@ -17,6 +17,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.template.loader import render_to_string
+
 from .forms import CustomUserChangeForm, CustomUserCreationForm, AuthenticationForm
 from .models import User
 

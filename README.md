@@ -19,12 +19,10 @@ This application solves the problem of having to build a custom django applicati
     LOGIN_URL = 'accounts:login-account'
 
     SYSTEM_ACCOUNT_EMAIL = 'email_username@domain.com'
-
     ```
 - Make sure this line is in your accounts `__init__.py` file 
     ```
     default_app_config = 'accounts.apps.AccountsConfig'
-
     ```
 - Make sure this line is in your accounts `apps.py` file
     ```
@@ -33,13 +31,12 @@ This application solves the problem of having to build a custom django applicati
 
         def ready(self):
             import signals
-
     ```
 - Customize as it fits your needs
 
 
 ## Contribution
-If you come across a piece of code that can benefit from an improvement, document process and reason for improvement,
+If you come across a piece of code that could benefit from an improvement, document process and reason for improvement,
 and create a pull request to the original repository
 
 

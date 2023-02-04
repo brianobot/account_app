@@ -1,9 +1,9 @@
 # Account App 
 
-Django custom app to handle account functionality in a Django Web Application such as creating users (for Authentication/Authorization) and user-profiles (to stored additional user data and configurations)
+Django custom app to handle account functionality in a Django Web Application such as creating users (for Authentication/Authorization) and user-profiles (to stored additional user data and configurations).
 
 ## Description 
-This application solves the problem of having to build a custom django application for account management which uses email/password as authentication factors from scratch, the codebase is constantly updated and improved to fixed known bugs and vulnerability and improve efficiency
+This application solves the overhead of having to build a custom django application for account management which uses email/password as authentication factors from scratch, the codebase is constantly updated and improved to fixed known bugs and vulnerability and improve efficiency.
 
 ## Installation and Setup
 - Clone the repo into a local machine 

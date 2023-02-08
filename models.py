@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class User(AbstractUser):
-    """User Model which uses email for user authentication in place of username"""
-    email = models.EmailField(_('email address'), unique=True)
-    ref = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
+    email = models.EmailField('email address', unique=True)
     username = None
 
     USERNAME_FIELD = 'email'
@@ -22,10 +20,8 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    @property
-    def uid(self):
-        return self.profile.uid
-
+    # prevents a user from been irrevesibly deleted from the database
+    # on delete simply set the user to in-active
     def delete(self, *args, **kwargs):
         self.is_active = False
         self.save()
@@ -43,8 +39,9 @@ class Profile(models.Model):
         ('female', 'female'),
     )
 
-    """  this model repr the database table that will hold all non-authentication essential details about a user, 
-    from preferences to accounts settings 
+    """  
+    this model repr the database table that will hold all non-authentication essential 
+    details about a user, from preferences to accounts settings 
     """    
     bio = models.TextField(blank=True, null=True)
     handle = models.CharField(max_length=100, blank=True, null=True)

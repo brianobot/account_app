@@ -1,6 +1,6 @@
-"""Custom Model Managers for models in the accounts app.
 """
-from django.db import models
+Custom Model Managers for models in the accounts app.
+"""
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
 

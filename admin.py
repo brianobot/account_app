@@ -1,14 +1,17 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
-from .models import AccountBalance, User, Profile
+
+from .models import User, Profile, AccountBalance
 from .forms import CustomUserCreationForm, CustomUserChangeForm 
+
 
 # to be used within the UserAdmin admin page
 class ProfileInline(LeafletGeoAdminMixin, admin.StackedInline):
     model = Profile
     extra = 0
-    
+
+
 # register out own model admin, based pn the default UserAdmin
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -32,6 +35,7 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('email',)
     ordering = ('email',)
     inlines = [ProfileInline]
+
 
 @admin.register(AccountBalance)
 class AccountBalanceAdmin(admin.ModelAdmin):

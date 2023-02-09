@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
-    ref = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
     username = None
 
     USERNAME_FIELD = 'email'

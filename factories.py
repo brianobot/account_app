@@ -1,6 +1,7 @@
 import factory
 from django.db import models
-from accounts.models import User, Profile
+
+from .models import User, Profile
 
 
 class UserFactory(factory.django.DjangoModelFactory):

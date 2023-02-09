@@ -1,25 +1,25 @@
 from django.views import generic
-from django.http.response import HttpResponse, JsonResponse
-from django.core.mail import send_mail, BadHeaderError
 from django.db.models.query_utils import Q
 from django.views.generic.base import TemplateView
+from django.core.mail import send_mail, BadHeaderError
+from django.http.response import HttpResponse, JsonResponse
+from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import views as auth_views
-from django.contrib import messages
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse_lazy 
-from django.shortcuts import redirect, render
-from django.conf import settings
 from django.template.loader import render_to_string
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy 
+from django.conf import settings
 
-from .forms import CustomUserChangeForm, CustomUserCreationForm, AuthenticationForm
-from .models import User
+from .. import forms
+from ..models import User
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ def create_account(request):
         return redirect('ticket:homepage')
     else:
         if request.method == 'POST':
-            form = CustomUserCreationForm(request.POST)
+            form = forms.CustomUserCreationForm(request.POST)
             if form.is_valid():
                 request.session['recent_email'] = form.cleaned_data.get('email')
                 user_email = form.cleaned_data.get('email')
@@ -66,7 +66,7 @@ def create_account(request):
                 return redirect("accounts:login-account")
             
         else:
-            form = CustomUserCreationForm()
+            form = forms.CustomUserCreationForm()
             
         previous_page = request.META.get('HTTP_REFERER')
         logger.info(f'account create page visited from {previous_page}')
@@ -79,7 +79,7 @@ class PostCreateAccount(TemplateView):
 
 class LoginPage(auth_views.LoginView):
     template_name = 'account/login.html'
-    form_class = AuthenticationForm
+    form_class = forms.AuthenticationForm
 
     def get(self, *args, **kwargs):
         if self.request.user.is_authenticated:
@@ -96,7 +96,7 @@ def logout_account(request):
 
 def password_reset_request(request):
     if request.method == "POST":
-        password_reset_form = PasswordResetForm(request.POST)
+        password_reset_form = forms.PasswordResetForm(request.POST)
         if password_reset_form.is_valid():
             user_email = password_reset_form.cleaned_data['email']
             associated_users = User.objects.filter(email=user_email)
@@ -121,5 +121,5 @@ def password_reset_request(request):
                         return HttpResponse('Invalid header found.')
                     return redirect("password_reset_done")
     else:
-        password_reset_form = PasswordResetForm()
+        password_reset_form = forms.PasswordResetForm()
     return render(request, template_name="accounts/password/password_reset.html", context={"password_reset_form": password_reset_form})

@@ -1,2 +1,4 @@
 django
-factory_boy
+djangorestframework == 3.14.0
+django-cors-headers
+django-factory_boy

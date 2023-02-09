@@ -9,6 +9,7 @@ This application solves the overhead of having to build a custom django applicat
 - ✔ Uses Email for User Authentication
 - ✔ Provides Profile Model which extends the User model to store non-authentication related data
 - ✔ Provides Support Both Vanilla Django (Template system) and Django RestFramework (Rest API)
+    - ✔ User authentication and authorization using token-based authentication (Rest API)
 
 ## Installation and Setup
 1. Clone the repo into a local machine:

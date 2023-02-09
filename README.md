@@ -5,6 +5,11 @@ Django custom app to handle account functionality in a Django Web Application su
 ## Description 
 This application solves the overhead of having to build a custom django application for account management which uses email/password as authentication factors from scratch, the codebase is constantly updated and improved to fixed known bugs and vulnerability and improve efficiency.
 
+## Features
+- ✔ Uses Email for User Authentication
+- ✔ Provides Profile Model which extends the User model to store non-authentication related data
+- ✔ Provides Support Both Vanilla Django (Template system) and Django RestFramework (Rest API)
+
 ## Installation and Setup
 1. Clone the repo into a local machine:
     ```git
@@ -47,6 +52,13 @@ This application solves the overhead of having to build a custom django applicat
     ```
     
 Customize as it fits your needs
+
+## Api Endpoints
+The API has the following endpoints for authentication
+   - `accounts/api/v1/api-token-auth/`:  Endpoint for obtaining tokens
+   - `accounts/api/v1/signup/` : Endpoint for Creating a user instance in the system
+   - `accounts/api/v1/login/`  : Endpoint for Authenicating a user, returns auth token
+   - `accounts/api/v1/users/`  : List all the user currently registered on the system
 
 
 ## Contribution
